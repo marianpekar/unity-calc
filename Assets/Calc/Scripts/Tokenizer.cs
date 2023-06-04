@@ -6,28 +6,28 @@ public static class Tokenizer
     public static List<string> Tokenize(string expr)
     {
         List<string> tokens = new();
-        StringBuilder token = new();
+        StringBuilder buffer = new();
 
         foreach (char c in expr)
         {
             if (c == '+' || c == '/' || c == '*' || c == '-' || c == '(' || c == ')' || c == '^')
             {
-                if (token.Length > 0)
+                if (buffer.Length > 0)
                 {
-                    tokens.Add(token.ToString());
-                    token.Clear();
+                    tokens.Add(buffer.ToString());
+                    buffer.Clear();
                 }
                 tokens.Add(c.ToString());
             }
             else
             {
-                token.Append(c);
+                buffer.Append(c);
             }
         }
 
-        if (token.Length > 0)
+        if (buffer.Length > 0)
         {
-            tokens.Add(token.ToString());
+            tokens.Add(buffer.ToString());
         }
 
         return tokens;
