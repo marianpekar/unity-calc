@@ -10,7 +10,7 @@ public static class Tokenizer
 
         foreach (char c in expr)
         {
-            if (c == '+' || c == '/' || c == '*' || c == '-' || c == '(' || c == ')' || c == '%' || c == '^')
+            if (c == '+' || c == '/' || c == '*' || c == '-' || c == '(' || c == ')' || c == '^')
             {
                 if (token.Length > 0)
                 {
@@ -24,6 +24,7 @@ public static class Tokenizer
                 token.Append(c);
             }
         }
+
         if (token.Length > 0)
         {
             tokens.Add(token.ToString());
