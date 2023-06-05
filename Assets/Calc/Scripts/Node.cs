@@ -35,17 +35,14 @@ public class OperatorNode : Node
 
     public override double Evaluate()
     {
-        switch (op)
+        return op switch
         {
-            case '+': return left.Evaluate() + right.Evaluate();
-            case '-': return left.Evaluate() - right.Evaluate();
-            case '*': return left.Evaluate() * right.Evaluate();
-            case '/': return left.Evaluate() / right.Evaluate();
-            case '^': return Math.Pow(left.Evaluate(), right.Evaluate());
-            default: 
-                break;
-        }
-
-        return 0f;
+            '+' => left.Evaluate() + right.Evaluate(),
+            '-' => left.Evaluate() - right.Evaluate(),
+            '*' => left.Evaluate() * right.Evaluate(),
+            '/' => left.Evaluate() / right.Evaluate(),
+            '^' => Math.Pow(left.Evaluate(), right.Evaluate()),
+            _ => throw new Exception($"Unknown operator '{op}'"),
+        };
     }
 }
