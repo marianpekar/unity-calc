@@ -1,30 +1,34 @@
 using System;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
 public class Display : MonoBehaviour
 {
     private TextMeshProUGUI textMesh;
-    private bool inFaultState = false;
-    private bool lastOpIsEvaluation = false;
+    private bool typeOver;
+    private bool pushOnType;
+    private RPN rpn;
 
     private void Awake()
     {
         textMesh = GetComponentInChildren<TextMeshProUGUI>();
+        rpn = new RPN();
     }
 
     public void Type(char c)
     {
-        lastOpIsEvaluation = false;
-
-        if (inFaultState)
+        if (typeOver)
         {
+            if (pushOnType)
+            {
+                rpn.Push(textMesh.text);
+            }
+            
             Clear();
-            inFaultState = false;
+            typeOver = false;
         }
 
-        if (textMesh.text == "0" && IsNumberOrBracket(c))
+        if (textMesh.text == "0")
         {
             textMesh.text = string.Empty;
         }
@@ -34,7 +38,7 @@ public class Display : MonoBehaviour
 
     public void EraseOne()
     {
-        if (inFaultState || lastOpIsEvaluation || textMesh.text.Length == 1)
+        if (typeOver || textMesh.text.Length == 1)
         {
             Clear();
             return;
@@ -48,31 +52,30 @@ public class Display : MonoBehaviour
         textMesh.text = "0";
     }
 
-    public void Evaluate()
+    public void Operate(char c)
     {
-        string expression = textMesh.text.Replace("E+", "*10^")
-                                         .Replace("E-", "*10^-");
-
-        List<string> tokens = Tokenizer.Tokenize(expression);
-        Parser parser = new(tokens);
         try
         {
-            Node node = parser.Parse();
-            string result = node.Evaluate().ToString();
+            rpn.Push(textMesh.text);
+            rpn.Push(c.ToString());
+            textMesh.text = rpn.Pop().ToString();
+            pushOnType = true;
 
-            textMesh.text = result;
         }
         catch (Exception)
         {
-            textMesh.text = "Invalid syntax";
-            inFaultState = true;
+            // ignore
         }
-
-        lastOpIsEvaluation = true;     
+        finally
+        {
+            typeOver = true;
+        }
     }
 
-    private bool IsNumberOrBracket(char c)
+    public void Enter()
     {
-        return double.TryParse(c.ToString(), out _) || c == '(' || c == ')';
+        rpn.Push(textMesh.text);
+        typeOver = true;
+        pushOnType = false;
     }
 }
